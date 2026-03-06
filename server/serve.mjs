@@ -20,10 +20,11 @@ const FALLBACK_BACKEND_URLS = [
   'http://idpa_backend.railway.internal:4000',
 ]
 
-// Security / framing for widget
+// Security / framing for widget — allow embedding from any domain
 app.use((req, res, next) => {
-  res.setHeader('X-Frame-Options', 'ALLOWALL')
+  res.removeHeader('X-Frame-Options')
   res.setHeader('Content-Security-Policy', "frame-ancestors *;")
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin')
   next()
 })
 
@@ -86,10 +87,18 @@ app.use('/api', async (req, res) => {
         console.log(`[PROXY] Trying ${targetUrl}...`)
         const response = await fetch(targetUrl, init)
         console.log(`[PROXY] ${req.method} ${req.originalUrl} -> ${response.status} (${Date.now() - startTime}ms)`)
-        // Forward status and headers
+        // Forward status and headers (strip restrictive security headers from backend)
+        const stripHeaders = new Set([
+          'transfer-encoding',
+          'x-frame-options',
+          'content-security-policy',
+          'cross-origin-opener-policy',
+          'cross-origin-resource-policy',
+          'cross-origin-embedder-policy',
+        ])
         res.status(response.status)
         response.headers.forEach((value, key) => {
-          if (key.toLowerCase() === 'transfer-encoding') return
+          if (stripHeaders.has(key.toLowerCase())) return
           res.setHeader(key, value)
         })
 
