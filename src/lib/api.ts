@@ -58,6 +58,7 @@ export interface Chatbot {
   description?: string | null
   systemPrompt?: string | null
   logoUrl?: string | null
+  websiteUrl?: string | null
   allowedDomains: string[]
   theme?: Record<string, unknown> | null
   model?: string | null
@@ -83,7 +84,7 @@ export async function listChatbots(): Promise<Chatbot[]> {
   return res.json()
 }
 
-export async function createChatbot(input: { name: string; description?: string; systemPrompt?: string; logoUrl?: string; allowedDomains: string[]; model?: string; status?: Chatbot['status'] }): Promise<Chatbot> {
+export async function createChatbot(input: { name: string; description?: string; systemPrompt?: string; logoUrl?: string; websiteUrl?: string; allowedDomains: string[]; model?: string; status?: Chatbot['status'] }): Promise<Chatbot> {
   const res = await fetch(`${BACKEND_URL}/api/chatbots`, {
     method: 'POST',
     headers: await authHeaders(),
@@ -94,7 +95,7 @@ export async function createChatbot(input: { name: string; description?: string;
   return res.json()
 }
 
-export async function updateChatbot(id: string, input: Partial<{ name: string; description?: string; systemPrompt?: string; logoUrl?: string; theme?: Record<string, unknown>; model?: string; status?: Chatbot['status'] }>): Promise<Chatbot> {
+export async function updateChatbot(id: string, input: Partial<{ name: string; description?: string; systemPrompt?: string; logoUrl?: string; websiteUrl?: string; theme?: Record<string, unknown>; model?: string; status?: Chatbot['status'] }>): Promise<Chatbot> {
   const res = await fetch(`${BACKEND_URL}/api/chatbots/${id}`, {
     method: 'PATCH',
     headers: await authHeaders(),

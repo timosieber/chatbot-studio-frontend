@@ -290,7 +290,7 @@ export default function Dashboard() {
     scrapeWebsite({
       chatbotId: newChatbot.id,
       startUrls: [websiteUrl],
-      maxDepth: 3,
+      maxDepth: 4,
       maxPages: 200,
     }).catch((e) => {
       setScrapingBots((prev) => {
